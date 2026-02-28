@@ -1,0 +1,86 @@
+{
+  "color": {
+    "bg": {
+      "void": { "value": "#050505" },
+      "panel": { "value": "#0A0A0A" },
+      "overlay": { "value": "rgba(5, 5, 5, 0.8)" }
+    },
+    "primary": {
+      "gold": { "value": "#D4AF37" },
+      "gold_dim": { "value": "rgba(212, 175, 55, 0.3)" },
+      "gold_glow": { "value": "rgba(212, 175, 55, 0.5)" }
+    },
+    "accent": {
+      "green": { "value": "#00FF94" },
+      "green_dim": { "value": "rgba(0, 255, 148, 0.2)" },
+      "red": { "value": "#FF4500" }
+    },
+    "text": {
+      "main": { "value": "#EAEAEA" },
+      "muted": { "value": "#888888" },
+      "inverse": { "value": "#050505" }
+    }
+  },
+  "font": {
+    "family": {
+      "heading": { "value": "Orbitron, Space Grotesk, sans-serif" },
+      "body": { "value": "Inter, sans-serif" },
+      "mono": { "value": "JetBrains Mono, monospace" }
+    },
+    "size": {
+      "hero": { "value": "64px" },
+      "h1": { "value": "48px" },
+      "h2": { "value": "32px" },
+      "lg": { "value": "18px" },
+      "base": { "value": "16px" },
+      "sm": { "value": "14px" },
+      "xs": { "value": "12px" }
+    },
+    "weight": {
+      "regular": { "value": "400" },
+      "medium": { "value": "500" },
+      "bold": { "value": "700" }
+    }
+  },
+  "spacing": {
+    "4": { "value": "4px" },
+    "8": { "value": "8px" },
+    "12": { "value": "12px" },
+    "16": { "value": "16px" },
+    "24": { "value": "24px" },
+    "32": { "value": "32px" },
+    "48": { "value": "48px" },
+    "64": { "value": "64px" },
+    "96": { "value": "96px" },
+    "128": { "value": "128px" }
+  },
+  "border": {
+    "radius": {
+      "none": { "value": "0px" },
+      "cut": { "value": "polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)" }
+    },
+    "width": {
+      "base": { "value": "1px" },
+      "thick": { "value": "2px" }
+    }
+  },
+  "effect": {
+    "shadow": {
+      "glow_gold": { "value": "0 0 20px rgba(212, 175, 55, 0.3)" },
+      "glow_green": { "value": "0 0 15px rgba(0, 255, 148, 0.4)" }
+    },
+    "backdrop": {
+      "glass": { "value": "blur(12px)" }
+    }
+  },
+  "animation": {
+    "duration": {
+      "fast": { "value": "150ms" },
+      "normal": { "value": "300ms" },
+      "slow": { "value": "500ms" }
+    },
+    "easing": {
+      "default": { "value": "cubic-bezier(0.4, 0, 0.2, 1)" }
+    }
+  }
+}
