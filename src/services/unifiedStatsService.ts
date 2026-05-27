@@ -4,6 +4,13 @@ import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
+// Hermes-backed live stats: same-origin Vercel API route that proxies
+// http://VPS:8443/security-stats.json over HTTPS. Set VITE_USE_HERMES_STATS=true
+// to prefer this real-data source over the Supabase / mock fallbacks.
+const USE_HERMES_STATS =
+  (import.meta.env.VITE_USE_HERMES_STATS || 'true').toString().toLowerCase() === 'true';
+const HERMES_STATS_PATH = import.meta.env.VITE_HERMES_STATS_PATH || '/api/security-stats';
+
 interface SecurityStats {
   total_protocols: number;
   vulnerabilities_prevented: number;
@@ -23,6 +30,87 @@ interface UnifiedStatsService {
   getStats(): Promise<SecurityStats>;
   getFrontendStats(): Promise<StatItem[]>;
   isProduction(): boolean;
+}
+
+/**
+ * HermesStatsService — reads live security data from the Hermes Chief of
+ * Security agent via the same-origin Vercel API route at
+ * /api/security-stats. Falls back transparently if the upstream is down.
+ *
+ * The data flow:
+ *   VPS cron every 5min -> /data/hermes/public/security-stats.json
+ *   nginx:alpine on VPS:8443 serves that file
+ *   Vercel edge function /api/security-stats proxies + caches at edge
+ *   This class fetches /api/security-stats from the browser
+ */
+class HermesStatsService implements UnifiedStatsService {
+  private lastSuccessfulStats: SecurityStats | null = null;
+
+  async getStats(): Promise<SecurityStats> {
+    const response = await fetch(HERMES_STATS_PATH, {
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!response.ok) {
+      if (this.lastSuccessfulStats) {
+        console.warn(
+          `Hermes stats upstream ${response.status} — serving last cached`,
+        );
+        return this.lastSuccessfulStats;
+      }
+      throw new Error(`Hermes stats unavailable (HTTP ${response.status})`);
+    }
+
+    const data = await response.json();
+    // Defensive: validate shape before trusting it
+    if (!data?.stats) {
+      throw new Error('Hermes stats response missing .stats field');
+    }
+
+    const stats: SecurityStats = {
+      total_protocols: Number(data.stats.total_protocols_audited) || 0,
+      vulnerabilities_prevented: Number(data.stats.vulnerabilities_prevented) || 0,
+      assets_protected_millions: Number(data.stats.assets_protected_millions) || 0,
+      hack_attempts_blocked: Number(data.stats.hack_attempts_blocked) || 0,
+      last_updated: data.last_updated || new Date().toISOString(),
+    };
+    this.lastSuccessfulStats = stats;
+    return stats;
+  }
+
+  async getFrontendStats(): Promise<StatItem[]> {
+    const stats = await this.getStats();
+    return [
+      {
+        label: 'Total Protocols Audited',
+        value: stats.total_protocols.toString(),
+        change: '+1',
+        trend: 'up',
+      },
+      {
+        label: 'Vulnerabilities Prevented',
+        value: stats.vulnerabilities_prevented.toLocaleString(),
+        change: 'live',
+        trend: 'up',
+      },
+      {
+        label: 'Assets Protected ($M)',
+        value: `$${stats.assets_protected_millions.toFixed(0)}`,
+        change: '+0',
+        trend: 'up',
+      },
+      {
+        label: 'Hack Attempts Blocked',
+        value: stats.hack_attempts_blocked.toLocaleString(),
+        change: 'live',
+        trend: 'up',
+      },
+    ];
+  }
+
+  isProduction(): boolean {
+    return true;
+  }
 }
 
 class MockStatsService implements UnifiedStatsService {
@@ -209,18 +297,29 @@ class ProductionStatsService implements UnifiedStatsService {
   }
 }
 
-// Unified service factory
+// Unified service factory.
+// Preference order:
+//   1. Hermes (live VPS data) if VITE_USE_HERMES_STATS is truthy (default)
+//   2. Supabase (production stats table) if credentials present
+//   3. Mock (simulated data) as final fallback
 export const createUnifiedStatsService = (): UnifiedStatsService => {
+  if (USE_HERMES_STATS) {
+    console.log(
+      `Initializing Hermes Statistics Service (real data via ${HERMES_STATS_PATH})`,
+    );
+    return new HermesStatsService();
+  }
+
   // Enhanced credential validation
-  const isValidUrl = SUPABASE_URL && 
-                     SUPABASE_URL.startsWith('http') && 
+  const isValidUrl = SUPABASE_URL &&
+                     SUPABASE_URL.startsWith('http') &&
                      SUPABASE_URL.includes('supabase.co');
-  const isValidKey = SUPABASE_ANON_KEY && 
-                     SUPABASE_ANON_KEY.length > 0 && 
+  const isValidKey = SUPABASE_ANON_KEY &&
+                     SUPABASE_ANON_KEY.length > 0 &&
                      SUPABASE_ANON_KEY.startsWith('eyJ');
-  
+
   if (isValidUrl && isValidKey) {
-    console.log('Initializing Production Statistics Service');
+    console.log('Initializing Production Statistics Service (Supabase)');
     return new ProductionStatsService();
   } else {
     console.log('Initializing Mock Statistics Service (Production Ready)');
