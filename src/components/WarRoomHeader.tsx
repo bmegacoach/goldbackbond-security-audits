@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Activity, Menu, X } from 'lucide-react';
+import { Shield, Menu, X } from 'lucide-react';
 
 export const WarRoomHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,6 +9,7 @@ export const WarRoomHeader = () => {
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'Pricing', path: '/pricing' },
+    { name: 'Guardian', path: '/guardian' },
     { name: 'Verification', path: '/verification' },
     { name: 'Process', path: '/process' }
   ];

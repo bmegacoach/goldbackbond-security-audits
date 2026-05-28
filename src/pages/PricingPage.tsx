@@ -523,9 +523,12 @@ export const PricingPage = () => {
               </div>
               
               <div className="space-y-3">
-                <button className="bg-cyber-green/20 hover:bg-cyber-green/30 border border-cyber-green px-8 py-4 text-cyber-green hover:text-void-black transition-all duration-300 btn-fill-hover cut-corners font-mono font-bold text-lg">
-                  INCLUDED WITH PLATINUM
-                </button>
+                <a
+                  href="/guardian"
+                  className="inline-block bg-cyber-green/20 hover:bg-cyber-green/30 border border-cyber-green px-8 py-4 text-cyber-green hover:text-void-black transition-all duration-300 btn-fill-hover cut-corners font-mono font-bold text-lg"
+                >
+                  SEE WHAT YOU RECEIVE →
+                </a>
                 <p className="text-text-muted font-mono text-xs">
                   *Only Available with Platinum Audit
                 </p>

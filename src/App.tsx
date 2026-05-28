@@ -5,6 +5,7 @@ import { PricingPage } from './pages/PricingPage';
 import { VerificationPage } from './pages/VerificationPage';
 import { ProcessPage } from './pages/ProcessPage';
 import { PaymentSuccessPage } from './pages/PaymentSuccessPage';
+import { GuardianPage } from './pages/GuardianPage';
 import { Footer } from './components/Footer';
 import { StripeProvider } from './context/StripeContext';
 import { StatisticsProvider } from './context/StatisticsContext';
@@ -24,6 +25,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/guardian" element={<GuardianPage />} />
                 <Route path="/verification" element={<VerificationPage />} />
                 <Route path="/process" element={<ProcessPage />} />
                 <Route path="/payment-success" element={<PaymentSuccessPage />} />
