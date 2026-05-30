@@ -1,27 +1,12 @@
-import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { CheckCircle, ArrowLeft, Download } from 'lucide-react';
+import { CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 
 export const PaymentSuccessPage = () => {
   const [searchParams] = useSearchParams();
-  const [countdown, setCountdown] = useState(10);
-  
+
   const tier = searchParams.get('tier') || 'unknown';
   const protocol = searchParams.get('protocol') || '';
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
+  const intakeHref = `/intake?tier=${encodeURIComponent(tier)}&protocol=${encodeURIComponent(protocol)}`;
 
   const getTierInfo = (tierName: string) => {
     const tierMap = {
@@ -84,28 +69,32 @@ export const PaymentSuccessPage = () => {
 
           <div className="border-t border-cyber-green/20 pt-6">
             <h3 className="text-metallic-gold font-mono text-sm font-bold uppercase tracking-wider mb-4">
-              NEXT STEPS
+              ONE MORE STEP — TELL US ABOUT YOUR PROTOCOL
             </h3>
+            <p className="text-text-muted text-sm mb-4">
+              The faster you submit your contract addresses, GitHub URL, and contact preference,
+              the faster we kick off your audit. Takes about 2 minutes.
+            </p>
             <div className="space-y-3">
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-cyber-green rounded-full mt-2" />
                 <div>
-                  <div className="text-white font-mono font-bold">Audit Kickoff</div>
-                  <div className="text-text-muted text-sm">Our team will contact you within 24 hours to schedule the audit</div>
+                  <div className="text-white font-mono font-bold">After you submit intake</div>
+                  <div className="text-text-muted text-sm">Our team reaches out within 24 hours via your preferred channel.</div>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-metallic-gold rounded-full mt-2" />
                 <div>
-                  <div className="text-white font-mono font-bold">Contract Submission</div>
-                  <div className="text-text-muted text-sm">You'll receive instructions for submitting your smart contracts</div>
+                  <div className="text-white font-mono font-bold">Day 1-3</div>
+                  <div className="text-text-muted text-sm">Static analysis begins (Slither + Mythril + Aderyn + manual review).</div>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-white rounded-full mt-2" />
                 <div>
-                  <div className="text-white font-mono font-bold">Audit Report</div>
-                  <div className="text-text-muted text-sm">Comprehensive security report delivered within agreed timeframe</div>
+                  <div className="text-white font-mono font-bold">Per-tier SLA</div>
+                  <div className="text-text-muted text-sm">Comprehensive report delivered. Guardian Node deployed if Platinum.</div>
                 </div>
               </div>
             </div>
@@ -113,18 +102,22 @@ export const PaymentSuccessPage = () => {
         </div>
 
         {/* Actions */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <Link
-            to="/"
+            to={intakeHref}
             className="w-full bg-cyber-green/20 hover:bg-cyber-green/30 border border-cyber-green px-8 py-4 text-cyber-green hover:text-void-black transition-all duration-300 btn-fill-hover cut-corners font-mono font-bold text-lg text-center block"
           >
-            <ArrowLeft className="w-5 h-5 inline mr-2" />
+            SUBMIT AUDIT INTAKE
+            <ArrowRight className="w-5 h-5 inline ml-2" />
+          </Link>
+
+          <Link
+            to="/"
+            className="w-full bg-metallic-gold/10 hover:bg-metallic-gold/20 border border-metallic-gold/30 px-8 py-3 text-metallic-gold transition-all duration-300 cut-corners font-mono text-sm text-center block"
+          >
+            <ArrowLeft className="w-4 h-4 inline mr-2" />
             BACK TO HOME
           </Link>
-          
-          <div className="text-center text-text-muted font-mono text-sm">
-            Redirecting to homepage in {countdown} seconds...
-          </div>
         </div>
 
         {/* Support Info */}

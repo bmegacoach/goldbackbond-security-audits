@@ -6,6 +6,7 @@ import { VerificationPage } from './pages/VerificationPage';
 import { ProcessPage } from './pages/ProcessPage';
 import { PaymentSuccessPage } from './pages/PaymentSuccessPage';
 import { GuardianPage } from './pages/GuardianPage';
+import { IntakePage } from './pages/IntakePage';
 import { Footer } from './components/Footer';
 import { StripeProvider } from './context/StripeContext';
 import { StatisticsProvider } from './context/StatisticsContext';
@@ -29,6 +30,7 @@ function App() {
                 <Route path="/verification" element={<VerificationPage />} />
                 <Route path="/process" element={<ProcessPage />} />
                 <Route path="/payment-success" element={<PaymentSuccessPage />} />
+                <Route path="/intake" element={<IntakePage />} />
               </Routes>
             </main>
             
